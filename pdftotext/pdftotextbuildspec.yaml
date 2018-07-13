@@ -5,6 +5,7 @@ phases:
     commands:
       - pwd
       - echo 'hello Ben'
+      - echo ${CODEBUILD_SRC_DIR}
       - ls -al
       - pip install -r $CODEBUILD_SRC_DIR/pdftotext/requirements.txt
       - python $CODEBUILD_SRC_DIR/pdftotext/process.py
