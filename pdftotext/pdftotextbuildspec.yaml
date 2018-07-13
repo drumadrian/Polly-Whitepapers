@@ -7,8 +7,8 @@ phases:
       - echo 'hello Ben'
       - ls -al
       - pip install -r $CODEBUILD_SRC_DIR/pdftotext/requirements.txt
-      - python $CODEBUILD_SRC_DIR/pdftotext/process.py > well_architected_framework.txt
-      - aws s3 cp ${CODEBUILD_SRC_DIR}/pdftotext/well_architected_framework.txt s3://pollywhitepapers/pdftotext
+      - python $CODEBUILD_SRC_DIR/pdftotext/process.py
+      - aws s3 cp ${CODEBUILD_SRC_DIR}/pdftotext/AWS_Well-Architected_Framework.txt s3://pollywhitepapers/pdftotext
 
 #artifacts:
 #  files:
