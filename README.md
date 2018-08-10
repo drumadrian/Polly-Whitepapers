@@ -5,7 +5,7 @@ This project is intended to download PDFs of the AWS whitepapers, convert to aud
 
 ###Create the Deployment Pipeline using Cloudformation: 
 
-```shell
+```sh
 aws cloudformation deploy --template-file /Users/adrian/Desktop/myhomeforcode/Polly-Whitepapers/deployment_pipeline/deployment_pipeline.template \
 						  --stack-name 'Polly-Whitepapers-deployment-Pipeline' \
 						  --parameter-overrides CodePipelineName='Polly-Whitepapers-Deployment-Pipeline' CodePipelineS3Bucket=deployment-pipeline-bucket \
