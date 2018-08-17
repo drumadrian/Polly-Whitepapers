@@ -1,11 +1,13 @@
+
+---
 AWSTemplateFormatVersion: 2010-09-09
 Description: Hugo Site - CodePipeline
 
 Parameters:
 
-   EnvType: 
+  EnvType: 
     Description: Environment type.
-    Default: test
+    Default: prod
     Type: String
     AllowedValues: 
       - prod
@@ -31,6 +33,10 @@ Parameters:
     NoEcho: True
   ArtifactsName:
     Type: String
+  GitHubUrl:
+    Type: String
+
+
 
 # TODO Create s3 bucket miscellaneous
 
@@ -42,10 +48,10 @@ Resources:
 
 
 
- CodePipelineServiceRole:
+  CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Ref CodePipelineServiceRoleName
+      RoleName: "UniqueCodepipelineServiceRole"
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -67,7 +73,7 @@ Resources:
       ArtifactStore:
         Location: !Ref CodePipelineS3Bucket
         Type: S3
-      RoleArn: !GetAtt CodePipelineServiceRole.arn
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
 
       Stages:
         - Name: Source
@@ -135,7 +141,7 @@ Resources:
     Type: "AWS::CodeBuild::Project"
     Properties:
       Artifacts:
-        Location: !Ref S3StagingName
+        Location: !Ref s3DeploymentBucketPRODUCTION
         Name: CodeBuildArtifacts
         Packaging: NONE
         Type: S3
@@ -162,7 +168,7 @@ Resources:
     Type: "AWS::CodeBuild::Project"
     Properties:
       Artifacts:
-        Location: !Ref S3StagingName
+        Location: !Ref s3DeploymentBucketPRODUCTION
         Name: CodeBuildArtifacts
         Packaging: NONE
         Type: S3
@@ -182,10 +188,10 @@ Resources:
 
 
 
- CodeBuildServiceRole:
+  CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Ref CodeBuildServiceRoleName
+      RoleName: 'CodeBuildServiceRole'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -206,7 +212,6 @@ Resources:
       BucketName: !Sub '${s3DeploymentBucketName}${EnvType}'
 
 
-
   s3DeploymentBucketSTAGING:
     Condition: CreateStagingResources
     Type: AWS::S3::Bucket
@@ -216,7 +221,7 @@ Resources:
 
 
 
-Exports:
+Outputs:
   s3DeploymentBucketName:
     Description: The name the Bucket to Store Objects
     Value: !Sub '${s3DeploymentBucketName}${EnvType}'
