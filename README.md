@@ -1,10 +1,9 @@
 # Polly-Whitepapers
-This project is intended to download PDFs of the AWS whitepapers, convert to audio, and publish.  
+This project is intended to download PDFs of the AWS whitepapers, convert to audio, and publish.  This project relies on getting PDF files of the AWS whitepapers which are (fortunately) available in other AWS repositories.  
 
 
 
-
-# Deployment Pipeline
+## Deployment Pipeline
 
 ![alt text](https://raw.githubusercontent.com/drumadrian/Polly-Whitepapers/master/Polly_Papers_Deployment_Flow.png)
 
@@ -54,4 +53,19 @@ aws cloudformation deploy --template-file '/Users/adrian/Desktop/myhomeforcode/P
                           --tags createdby=awsgurus project=Polly-Whitepapers
 
 ```
+
+
+
+
+
+#### GitHub Repos with WhitePapers:
+
+- https://github.com/pravsingh/aws_whitepapers
+
+- https://github.com/StevenTTuD/aws-whitepaper-downloader
+
+- https://github.com/sunilake/AWSSolutionsReference
+
+
+
 
