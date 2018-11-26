@@ -4,7 +4,7 @@ This project is intended to download PDFs of the AWS whitepapers, convert to aud
 
 
 
-#Deployment Pipeline
+# Deployment Pipeline
 
 ![alt text](https://raw.githubusercontent.com/drumadrian/Polly-Whitepapers/master/Polly_Papers_Deployment_Flow.png)
 
