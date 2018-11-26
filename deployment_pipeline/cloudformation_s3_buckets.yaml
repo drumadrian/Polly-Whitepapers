@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  AWS CloudFormation S3 Bucket Stack Template.
+
+
+Parameters:
+
+  PipelineName:
+    Description: 'The stack that created these actions'
+    Type: String
+
+  GitHTTPSURL:
+    Description: 'The HTTPS clone URL of the code repository'
+    Type: String
+
+  GitRepoName:
+    Description: 'The (folder)name the code repository'
+    Type: String
+
+Resources:
+
+
+
+
+
+  outputs3bucketname:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+
+
+  SSMparametercrawleroutputs3bucketname:
+    Type: "AWS::SSM::Parameter"
+    Properties: 
+      Description: The name of the crawler output bucket.  
+      Name: !Sub "${PipelineName}-SSMparametercrawleroutputs3bucketname"
+      Type: String
+      Value: !Ref outputs3bucketname
+
+
+
+Outputs:
+  
+  outputs3bucketnameoutput:
+    Description: The name of the crawler output bucket 
+    Value: !Ref outputs3bucketname
+    Export:
+      Name: !Sub "${PipelineName}-outputs3bucketnameoutput"
+
+
