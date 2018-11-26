@@ -15,6 +15,27 @@ Parameters:
     Type: String
     Default: "master"
 
+  GitHubOwner:
+    Description: Owner of the GitHub repo
+    Type: String
+    Default: "awsgurus"
+
+  GitHubRepo:
+    Description: The name of the GitHub repo
+    Type: String
+    Default: "awsgurus"
+
+  GitHubToken:
+    Description: The OAUTH token from GitHub
+    Type: String
+    Default: "awsgurus"
+
+  GitHubUrl:
+    Description: The URL to the Git Repository
+    Type: String
+    Default: "awsgurus"
+
+
 
 Resources:
 
@@ -314,7 +335,53 @@ Resources:
                 - Name: output-deploy-step
 
 
+        - Name: Start_Automated_Tests
+          Actions:
+            - Name: Start_Upload_Test
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              InputArtifacts:
+                - Name: code
+              Configuration:
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'start_automated_tests'] ]
+              RunOrder: '1'
+              OutputArtifacts:
+                - Name: output-start-upload-test
 
+
+        - Name: Publish_Public_Artifacts
+          Actions:
+            - Name: Publish_Cloudformation_Template
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              InputArtifacts:
+                - Name: code
+              Configuration:
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'publish_pipeline_template'] ]
+              RunOrder: '1'
+              OutputArtifacts:
+                - Name: output-publish-pipeline-template
+
+
+            - Name: Test_Published_Cloudformation_Template
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              InputArtifacts:
+                - Name: code
+              Configuration:
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'test_published_template'] ]
+              RunOrder: '1'
+              OutputArtifacts:
+                - Name: output-test-published-template
 
 
 
@@ -450,6 +517,109 @@ Resources:
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 10
+
+
+
+
+  CodeBuildProjectStartAutomatedTests:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'start_automated_tests'] ]
+      ServiceRole: !Ref CodeBuildRole
+      Artifacts:
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+        EnvironmentVariables:
+          - Name: codecommithttpsname
+            Value: !GetAtt pollypapersrep.Name
+            Type: PLAINTEXT
+          - Name: codecommithttpsurl
+            Value: !GetAtt pollypapersrep.CloneUrlHttp
+            Type: PLAINTEXT
+          - Name: codecommithttpsurlSSM
+            Value: !Sub "${AWS::StackName}-pollypapersrepURL"
+            Type: PARAMETER_STORE
+          - Name: codepipelinesnstopicarn
+            Value: !Ref CodePipelineSNSTopic
+            Type: PLAINTEXT
+      Source:
+        BuildSpec: deployment_pipeline/buildspec_start_automated_tests.yml
+        GitCloneDepth: 0
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+
+
+
+  CodeBuildProjectPublishPipelineTemplate:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'publish_pipeline_template'] ]
+      ServiceRole: !Ref CodeBuildRole
+      Artifacts:
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+        EnvironmentVariables:
+          - Name: codecommithttpsname
+            Value: !GetAtt pollypapersrep.Name
+            Type: PLAINTEXT
+          - Name: codecommithttpsurl
+            Value: !GetAtt pollypapersrep.CloneUrlHttp
+            Type: PLAINTEXT
+          - Name: codecommithttpsurlSSM
+            Value: !Sub "${AWS::StackName}-pollypapersrepURL"
+            Type: PARAMETER_STORE
+          - Name: codepipelinesnstopicarn
+            Value: !Ref CodePipelineSNSTopic
+            Type: PLAINTEXT
+      Source:
+        BuildSpec: deployment_pipeline/buildspec_publish_pipeline_template.yml
+        GitCloneDepth: 0
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+
+
+
+  CodeBuildProjectTestPublishedPipelineTemplate:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'test_published_template'] ]
+      ServiceRole: !Ref CodeBuildRole
+      Artifacts:
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+        EnvironmentVariables:
+          - Name: codecommithttpsname
+            Value: !GetAtt pollypapersrep.Name
+            Type: PLAINTEXT
+          - Name: codecommithttpsurl
+            Value: !GetAtt pollypapersrep.CloneUrlHttp
+            Type: PLAINTEXT
+          - Name: codecommithttpsurlSSM
+            Value: !Sub "${AWS::StackName}-pollypapersrepURL"
+            Type: PARAMETER_STORE
+          - Name: codepipelinesnstopicarn
+            Value: !Ref CodePipelineSNSTopic
+            Type: PLAINTEXT
+      Source:
+        BuildSpec: deployment_pipeline/buildspec_test_published_pipeline_template.yml
+        GitCloneDepth: 0
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+
+
+
 
 
 
