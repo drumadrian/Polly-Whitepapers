@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/drumadrian/Polly-Whitepapers.svg?branch=master)](https://travis-ci.org/drumadrian/Polly-Whitepapers.svg?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/eb3c203b2e2a434db8d3f7787d254635)](https://www.codacy.com/app/drumadrian/Polly-Whitepapers?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=drumadrian/Polly-Whitepapers&amp;utm_campaign=Badge_Grade)
 
 
 # Polly-Whitepapers
