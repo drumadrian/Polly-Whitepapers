@@ -6,7 +6,6 @@ from pdfminer.layout import LAParams
 from pdfminer.layout import LTTextBox
 from pdfminer.layout import LTTextLine
 from pdfminer.layout import LTFigure
-from pdfminer.layout import LTImage
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFNoOutlines
 from pdfminer.pdfdocument import PDFDocument
