@@ -1,3 +1,5 @@
+https://travis-ci.org/drumadrian/Polly-Whitepapers.svg?branch=master
+
 # Polly-Whitepapers
 This project is intended to download PDFs of the AWS whitepapers, convert to audio, and publish.  This project relies on getting PDF files of the AWS whitepapers which are (fortunately) available in other AWS repositories.  
 
