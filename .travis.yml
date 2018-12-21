@@ -1,7 +1,7 @@
 notifications:
   slack: aws-study-gurus:xtwiPAeu8VwM1HaPb28Fo9og
 language: bash
-before_script: bash pre-travis-test.sh
+# before_script: bash pre-travis-test.sh
 script: bash travis-test.sh
 env:
   global:
