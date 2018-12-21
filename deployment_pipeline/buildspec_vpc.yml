@@ -38,8 +38,8 @@ phases:
 
   build:
     commands:
-      - cd partneroptimizer.5/crawler2.0/
-      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-vpc --template-file partneroptimizer_cloudformation_vpc.yaml --parameter-overrides CIDRRangePrefix=10.250 --capabilities CAPABILITY_IAM --tags createdby=Adrian_James --no-fail-on-empty-changeset --debug
+      - cd deployment_pipeline
+      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-vpc --template-file cloudformation_vpc.yaml --parameter-overrides CIDRRangePrefix=10.250 --capabilities CAPABILITY_IAM --tags createdby=awsstudygurus --no-fail-on-empty-changeset --debug
       - aws ec2 describe-vpcs
       - aws s3 ls
       # - command
