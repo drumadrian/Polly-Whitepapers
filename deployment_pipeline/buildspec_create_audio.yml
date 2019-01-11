@@ -48,6 +48,8 @@ phases:
 
   build:
     commands:
+      - cd deployment_pipeline
+      - ll
       - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-create_audio --template-file cloudformation_create_audio.yaml --parameter-overrides PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$codecommithttpsurl GitRepoName=$codecommithttpsname --capabilities CAPABILITY_IAM --tags createdby=DevOps --no-fail-on-empty-changeset
 
   post_build:
