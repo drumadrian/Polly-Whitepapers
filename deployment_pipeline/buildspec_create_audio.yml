@@ -35,10 +35,20 @@ phases:
       - CODEBUILD_INITIATOR_NAME="$(echo $CODEBUILD_INITIATOR | cut -d'/' -f2)"
       - echo $CODEBUILD_INITIATOR_NAME
 
+      ## SET ENVIRONMENT VARIABLES
+      # - CRAWLERCODESSMPARAMETERNAME=$PIPELINENAME-crawlercoderepoURL
+      # - CODECOMMITREPOHTTPSURL=$(aws ssm get-parameter --name $CRAWLERCODESSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
+
+      # - CRAWLERREPONAMESSMPARAMETERNAME=$PIPELINENAME-crawlercoderepoName
+      # - CRAWLERREPONAMESSMPARAMETER=$(aws ssm get-parameter --name $CRAWLERREPONAMESSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
+
+      # - CRAWLERSNSTOPICSSMPARAMETERNAME=$PIPELINENAME-SSMparametercrawlercodeSNStopicARN
+      # - CRAWLERSNSTOPICSSMPARAMETER=$(aws ssm get-parameter --name $CRAWLERSNSTOPICSSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
+
 
   build:
     commands:
-      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-step-function --template-file cloudformation_step_function.yaml --parameter-overrides PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$codecommithttpsurl GitRepoName=$codecommithttpsname --capabilities CAPABILITY_IAM --tags createdby=DevOps --no-fail-on-empty-changeset
+      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-create_audio --template-file cloudformation_create_audio.yaml --parameter-overrides PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$codecommithttpsurl GitRepoName=$codecommithttpsname --capabilities CAPABILITY_IAM --tags createdby=DevOps --no-fail-on-empty-changeset
 
   post_build:
     commands:

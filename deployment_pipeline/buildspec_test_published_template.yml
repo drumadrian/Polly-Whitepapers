@@ -38,7 +38,7 @@ phases:
 
   build:
     commands:
-      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-step-function --template-file cloudformation_step_function.yaml --parameter-overrides PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$codecommithttpsurl GitRepoName=$codecommithttpsname --capabilities CAPABILITY_IAM --tags createdby=DevOps --no-fail-on-empty-changeset
+      - echo 'Test Published Templates'
 
   post_build:
     commands:

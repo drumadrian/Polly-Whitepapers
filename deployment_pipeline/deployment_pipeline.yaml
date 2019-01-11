@@ -502,7 +502,7 @@ Resources:
 
         - Name: Build_Lambda_Functions
           Actions:
-            - Name: Create_Audio
+            - Name: Build_Create_Audio
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -517,7 +517,7 @@ Resources:
                 - Name: output-Create_Audio
 
 
-            - Name: Deploy_Lambda_Functions
+            - Name: Build_Publish_Audio
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -532,7 +532,9 @@ Resources:
                 - Name: output-Deploy_Lambda_Functions
 
 
-            - Name: Deploy_Step_Functions
+        - Name: Deploy_Step_Function
+          Actions:
+            - Name: Step_Function
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -739,7 +741,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: deployment_pipeline/buildspec_build_audio.yml
+        BuildSpec: deployment_pipeline/buildspec_create_audio.yml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 17

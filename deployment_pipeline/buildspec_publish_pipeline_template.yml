@@ -1,6 +1,5 @@
 ########################################################################################################
 ########################################################################################################
-#   Deploy Auto Cleanup System
 #
 #     Just run this file over and over
 #
@@ -10,7 +9,6 @@
 
 # Notes:
 
-# This is intended to run in the SIRRR Staging AWS Account 
 # https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
 # 
 
@@ -37,21 +35,10 @@ phases:
       - CODEBUILD_INITIATOR_NAME="$(echo $CODEBUILD_INITIATOR | cut -d'/' -f2)"
       - echo $CODEBUILD_INITIATOR_NAME
 
-      ## SET ENVIRONMENT VARIABLES
-      # - CRAWLERCODESSMPARAMETERNAME=$PIPELINENAME-crawlercoderepoURL
-      # - CODECOMMITREPOHTTPSURL=$(aws ssm get-parameter --name $CRAWLERCODESSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
-
-      # - CRAWLERREPONAMESSMPARAMETERNAME=$PIPELINENAME-crawlercoderepoName
-      # - CRAWLERREPONAMESSMPARAMETER=$(aws ssm get-parameter --name $CRAWLERREPONAMESSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
-
-      # - CRAWLERSNSTOPICSSMPARAMETERNAME=$PIPELINENAME-SSMparametercrawlercodeSNStopicARN
-      # - CRAWLERSNSTOPICSSMPARAMETER=$(aws ssm get-parameter --name $CRAWLERSNSTOPICSSMPARAMETERNAME --region $AWS_REGION --output text | awk '{print $4}')
-
 
   build:
     commands:
-      - cd partneroptimizer.5/crawler2.0/
-      - aws cloudformation deploy --stack-name $CODEBUILD_INITIATOR_NAME-createoutputbucket --template-file partneroptimizer_cloudformation_createoutputbucket.yaml --parameter-overrides PipelineName=$CODEBUILD_INITIATOR_NAME GitHTTPSURL=$codecommithttpsurl GitRepoName=$codecommithttpsname --capabilities CAPABILITY_IAM --tags createdby=DevOps --no-fail-on-empty-changeset
+      - echo 'Publish'
 
   post_build:
     commands:
