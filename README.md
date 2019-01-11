@@ -14,6 +14,8 @@ This project is intended to download PDFs of the AWS whitepapers, convert to aud
 
 
 
+
+
 ## Getting Started
 
 1. [Fork this repo](fork).
@@ -37,6 +39,70 @@ This project is intended to download PDFs of the AWS whitepapers, convert to aud
   c. Verify the created/updated resources in the `Resources` tab of the CloudFormation console match the values in the new template.
 
 That's it!
+
+
+
+
+
+## Create the Deployment Pipeline using AWS StudyGurus CLI: 
+
+
+Setup
+
+```
+chmod +x awsstudygurus
+export PATH=$PATH:./
+awsstudygurus --help
+
+```
+
+Usage
+
+```
+
+    USAGE: awsstudygurusawsstudygurus [OPTIONS] 
+
+    OPTIONS
+
+	-h     Dispplay this help dialog
+	-p     Displays the awsstudygurus tool variables 
+	         (varies based on branch)
+
+	-d     Runs with defaults (not yet implemented)
+	-r     Forces a reset (not yet implemented)
+
+	-dp    Creates the Cloudformation stack for the Deployment pipeline
+	         The Deployment pipeline deploys the app code and 
+	         must be created first
+	-da    Pushes the application code to the origin for the Deployment pipeline
+	         The Deployment pipeline must be created first.  Automation 
+	         for the AWS pipeline must be setup using the BitBucket repo plugin
+	         https://marketplace.atlassian.com/apps/1211351/repository-mirror-plugin-for-bitbucket?hosting=server&tab=overview
+	         https://github.com/ef-labs/stash-hook-mirror/wiki
+
+	-delp  Deletes the Cloudformation stack and related resources for the Deployment pipeline
+	-dela  Deletes the Cloudformation stacks and related resources for the Application
+
+
+	--help 		    Same as -h
+	--printvariables    Same as -p
+	--deploy_pipeline   Same as -dp
+	--deploy_app 	    Same as -da
+	--destroy_pipeline  Same as -delp
+	--destroy_app	    Same as -dela
+	--default 	    not yet implemented
+	--reset  	    not yet implemented
+
+
+```
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+
 
 
 
