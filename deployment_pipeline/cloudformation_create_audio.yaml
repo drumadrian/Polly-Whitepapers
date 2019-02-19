@@ -1,0 +1,168 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  AWS CloudFormation Nimbus server Stack Template.
+
+
+Parameters:
+
+  PipelineName:
+    Description: 'The stack that created the Nimbus server'
+    Type: String
+
+  GitHTTPSURL:
+    Description: 'The HTTPS clone URL of the code repository'
+    Type: String
+
+Resources:
+
+  Nimbus:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: m4.large
+      IamInstanceProfile: !Ref nimbusInstanceProfile
+      SubnetId: 
+        Fn::ImportValue: 
+          !Sub "${PipelineName}-vpc-SubnetServerA"
+      ImageId: ami-6cd6f714
+      KeyName: saasmaxprod
+      SecurityGroupIds:
+        - !Ref nimbusServerSG
+      Tags:
+        - Key: Name
+          Value: crawler nimbus server
+        - Key: role
+          Value: nimbus
+        - Key: PipelineName
+          Value: !Sub "${PipelineName}"
+        - Key: !Sub "${PipelineName}-ssm_nimbus"
+          Value: project
+        - Key: CloneUrlHttp
+          Value: 
+            Fn::ImportValue: !Sub "${PipelineName}-crawlercoderepoURL"
+      UserData: 
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          echo removing_OLD_SSM_agent
+          # remove old ssm agent
+          yes | yum erase amazon-ssm-agent –y
+          # install new ssm agent
+          yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+          # Install Git on server 
+          yum install -y git 
+          ## SETUP GIT USERNAME
+          # export HOME=/root
+          # git config --global user.name partneroptimizerNimbus
+          ## SETUP GIT credential-helper 
+          # git config --global credential.helper '!aws codecommit credential-helper $@'
+          # git config --global credential.UseHttpPath true
+          # apply OS updates
+          yum update -y
+          cd /home/ec2-user
+          echo { "Ref" : "GitHTTPSURL" } > /root/GitHTTPSURL
+          echo /root/GitHTTPSURL
+          chmod 777 /root/GitHTTPSURL
+          yes | git clone { "Ref" : "GitHTTPSURL" }
+          reboot
+
+
+  nimbusServerSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Allow SSH access from anywhere
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          CidrIp: 
+            Fn::ImportValue:         
+              !Sub '${PipelineName}-vpc-CustomVPCCidrBlock'
+        - FromPort: '-1'
+          ToPort: '-1'
+          IpProtocol: icmp
+          CidrIp: 
+            Fn::ImportValue:         
+              !Sub '${PipelineName}-vpc-CustomVPCCidrBlock'
+      VpcId: 
+        Fn::ImportValue: 
+          !Sub "${PipelineName}-vpc-VPCID"
+      Tags:
+        - Key: Name
+          Value: nimbusServerSG
+
+
+  nimbusInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref crawlernimbusRole
+
+
+  crawlernimbusServerPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: crawlernimbusServerPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'cloudformation:Describe*'
+              - 's3:*'
+              - 'codecommit:*'
+              - 'sns:*'
+            Resource: '*'
+      Roles:
+        - !Ref crawlernimbusRole
+
+
+
+
+  crawlernimbusRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/AWSCodeCommitReadOnly
+        - arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+
+
+
+  SSMparametercrawlerNimbusIPaddress:
+    Type: "AWS::SSM::Parameter"
+    Properties: 
+      Description: The IP address of the nimbus server.  
+      Name: !Sub "${AWS::StackName}-SSMparametercrawlerNimbusIPaddress"
+      Type: String
+      Value: 
+        Fn::GetAtt: [ Nimbus, PrivateIp ]
+
+
+
+  nimbusDNSrecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Comment: DNS name for my nimbus instance.
+      HostedZoneId: 
+        Fn::ImportValue: 
+          !Sub "${PipelineName}-vpc-PrivateZoneDNSHostedZoneID"
+      Name: 
+        !Join
+          - '.'
+          - - nimbus
+            - Fn::ImportValue: !Sub "${PipelineName}-vpc-PrivateZoneDNSHostedZoneName"
+      # Name: nimbus.partneroptimizercrawler.com.
+      Type: A
+      TTL: '60'
+      ResourceRecords:
+      - !GetAtt Nimbus.PrivateIp

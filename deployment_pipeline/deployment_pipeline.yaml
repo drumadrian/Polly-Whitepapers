@@ -532,9 +532,9 @@ Resources:
                 - Name: output-Deploy_Lambda_Functions
 
 
-        - Name: Deploy_Step_Function
+        - Name: Deploy_Fargate
           Actions:
-            - Name: Step_Function
+            - Name: Fargate
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -543,10 +543,10 @@ Resources:
               InputArtifacts:
                 - Name: code
               Configuration:
-                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'deploy_step'] ]
+                ProjectName: !Join [ -, [!Ref 'AWS::StackName', 'deploy_fargate'] ]
               RunOrder: '1'
               OutputArtifacts:
-                - Name: output-deploy-step
+                - Name: output-deploy-fargate
 
 
         - Name: Start_Automated_Tests
@@ -799,10 +799,10 @@ Resources:
 
 
 
-  CodeBuildProjectDeployStep:
+  CodeBuildProjectDeployFargate:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Join [ -, [!Ref 'AWS::StackName', 'deploy_step'] ]
+      Name: !Join [ -, [!Ref 'AWS::StackName', 'deploy_fargate'] ]
       ServiceRole: !Ref CodeBuildRole
       Artifacts:
         Type: CODEPIPELINE
@@ -837,7 +837,7 @@ Resources:
             Value: !Join [ -, [!Ref 'AWS::StackName', 'artifactstorebucket'] ]
             Type: PLAINTEXT
       Source:
-        BuildSpec: deployment_pipeline/buildspec_deploy_step.yml
+        BuildSpec: deployment_pipeline/buildspec_deploy_fargate.yml
         GitCloneDepth: 0
         Type: CODEPIPELINE
       TimeoutInMinutes: 17
