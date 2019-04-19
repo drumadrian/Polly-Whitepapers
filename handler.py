@@ -1,7 +1,10 @@
 import json
-
+from process_pdf import ProcessPdf
 
 def pdftotext(event, context):
+
+    ProcessPdf.pdf_to_text(event)
+
     # body = {
     #     "message": "Go Serverless v1.0! Your function executed successfully!",
     #     "input": event
