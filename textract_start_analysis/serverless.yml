@@ -1,0 +1,60 @@
+service: textract-start-analysis
+
+provider:
+  name: aws
+  runtime: python3.6
+
+custom:
+  bucketName: polly-textract-start-analysis
+
+functions:
+  textract_start_analysis:
+    handler: function.lambda_handler
+    events:
+      - s3:
+        bucket:
+          Ref: bucketName
+        event: s3:ObjectCreated:*
+        rules:
+          - suffix: .pdf
+    environment:
+      SnsCompleteTopic:
+        Ref: PollyTextractStartAnalysisCompleteSns
+      PollyTextractSnsRole:
+        Ref: PollyTextractPublishSnsRole
+
+resources:
+  Resources:
+    PollyTextractStartAnalysisCompleteSns:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: polly-textract-analysis-complete
+
+    PollyTextractPublishSnsRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: PollyTextractPublishSns
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "sns.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+
+    PollyTextractPublishSnsPolicy:
+      Type: AWS::IAM::Policy
+      Properties:
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            -
+              Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: "*"
+        PolicyName: PollyTextractPublishSnsPolicy
+        Roles:
+          - PollyTextractPublishSns
